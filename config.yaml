@@ -1,0 +1,16 @@
+llm:
+  model: claude-opus-4-5
+  max_tokens: 4096
+
+paths:
+  raw: ./raw
+  wiki: ./wiki
+  outputs: ./outputs
+
+compile:
+  incremental: true
+  auto_lint_after_compile: false
+
+watch:
+  enabled: false
+  debounce_seconds: 5
