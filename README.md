@@ -29,7 +29,9 @@ A personal knowledge base system where an LLM reads your raw source material and
 │   ├── search.py           # Full-text search
 │   ├── lint.py             # Health checks
 │   ├── ingest.py           # Add files/URLs to raw/
-│   └── watch.py            # Auto-compile on file changes
+│   ├── watch.py            # Auto-compile on file changes
+│   ├── slides.py           # Generate Marp slide decks
+│   └── charts.py           # Generate Matplotlib charts
 ├── config.yaml
 ├── .env                    # Your API key goes here
 ├── requirements.txt
@@ -114,6 +116,44 @@ results = search("attention mechanism", wiki_dir=Path("wiki"), top_k=5)
 for r in results:
     print(r["title"], r["score"], r["excerpt"])
 ```
+
+### Slides — Generate Marp presentations
+
+```bash
+# Generate a slide deck from wiki content
+python tools/slides.py "Transformer Architecture"
+python tools/slides.py "attention mechanism" --slides 12
+python tools/slides.py "NLP overview" --theme gaia
+
+# Available themes: default, gaia, uncover
+```
+
+Outputs a Marp-format `.md` file in `outputs/`. To render:
+
+```bash
+# Install Marp CLI (one time)
+npm install -g @marp-team/marp-cli
+
+# Convert to PDF or HTML
+npx @marp-team/marp-cli outputs/slides-*.md --pdf
+npx @marp-team/marp-cli outputs/slides-*.md --html
+```
+
+Or open in VS Code with the [Marp extension](https://marketplace.visualstudio.com/items?itemName=marp-team.marp-vscode).
+
+### Charts — Generate Matplotlib visualizations
+
+```bash
+# Generate a chart from wiki data
+python tools/charts.py "comparison of model sizes"
+python tools/charts.py "timeline of NLP milestones" --type timeline
+python tools/charts.py "concept relationships" --type network
+python tools/charts.py "attention head counts" --type bar --save-code
+
+# Available types: bar, line, pie, scatter, heatmap, network, timeline, auto
+```
+
+Outputs a `.png` chart + companion `.md` file in `outputs/`. The `--save-code` flag also saves the generated Python for inspection or editing.
 
 ### Lint — Health checks
 
