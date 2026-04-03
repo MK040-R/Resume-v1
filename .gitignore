@@ -1,0 +1,19 @@
+# Environment variables - NEVER commit API keys
+.env
+
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+.venv/
+venv/
+env/
+
+# Knowledge base runtime files
+usage.log
+watch.log
+.watch.pid
+raw/.manifest.json
+
+# OS
+.DS_Store
