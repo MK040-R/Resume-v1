@@ -347,6 +347,32 @@ def apply_fix(
         concepts[slug] = new_article
         return True, f"Created missing concept article [[{slug}]]"
 
+    elif issue_type == "BROKEN_WIKILINK" and affected:
+        # Fix empty [[]] wikilinks by removing them with a simple regex
+        import re
+        fixed_any = False
+        fixed_slugs = []
+        for slug in affected:
+            if slug not in concepts:
+                continue
+            content = concepts[slug]
+            # Remove empty wikilinks [[]] or [[ ]]
+            cleaned = re.sub(r'\[\[\s*\]\]', '', content)
+            # Remove wikilinks pointing to non-existent concepts
+            def remove_dead_link(m):
+                target = m.group(1).strip()
+                if target and target not in concepts:
+                    return target  # replace [[missing]] with just the text
+                return m.group(0)  # keep valid links as-is
+            cleaned = re.sub(r'\[\[([^\]]*)\]\]', remove_dead_link, cleaned)
+            if cleaned != content:
+                atomic_write(wiki_dir / "concepts" / f"{slug}.md", cleaned)
+                concepts[slug] = cleaned
+                fixed_any = True
+                fixed_slugs.append(slug)
+        if fixed_any:
+            return True, f"Fixed broken wikilinks in [[{']], [['.join(fixed_slugs)}]]"
+
     return False, ""
 
 
